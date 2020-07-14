@@ -33,7 +33,7 @@ void reverse_stringSharedSol(char* str, int n){
 __global__
 void reverse_stringOptimalSol(char* str, int n){
     int i = threadIdx.x;
-    if ((i/2)<n){
+    if (i<n/2){
         char tmp = str[i];
         str[i] = str[n-i-1];
         str[n-i-1] = tmp;
