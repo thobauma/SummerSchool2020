@@ -3,14 +3,15 @@
 #include <cuda.h>
 
 #include "util.hpp"
-
-__host__
-double f(double x) {
+template <typename T>
+__host__ __device__
+T f(T x) {
     return exp(cos(x))-2;
 };
 
-__host__
-double fp(double x) {
+template <typename T>
+__host__ __device__
+T fp(T x) {
     return -sin(x) * exp(cos(x));
 };
 
@@ -18,7 +19,8 @@ double fp(double x) {
 //      f(x) = 0
 // where
 //      f(x) = exp(cos(x)) - 2
-void newton_host(int n, double *x) {
+template <typename T>
+void newton_host(int n, T *x) {
     for(int i=0; i<n; ++i) {
         auto x0 = x[i];
         for(int iter=0; iter<5; ++iter) {
