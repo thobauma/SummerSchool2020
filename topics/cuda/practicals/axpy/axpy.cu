@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
     start = get_time();
     // TODO launch kernel (alpha=2.0)
-    axpy<double><<<num_blocks, grid_dim>>>(n, 2.0, x_device, y_device);
+    axpy<double><<<grid_dim, block_size>>>(n, 2.0, x_device, y_device);
 
     cudaDeviceSynchronize();
     auto time_axpy = get_time() - start;
