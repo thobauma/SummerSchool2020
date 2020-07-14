@@ -29,7 +29,7 @@ void dot_gpu_kernel(const double *x, const double* y, double *result, int n) {
 double dot_gpu(const double *x, const double* y, int n) {
     static double* result = malloc_managed<double>(1);
     // TODO call dot product kernel
-    dot_gpu_kernel<1024><<<1,1024>>>(x, y, result, n);
+    dot_gpu_kernel<n><<<1,n>>>(x, y, result, n);
     cudaDeviceSynchronize();
     return *result;
 }
