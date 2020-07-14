@@ -4,12 +4,12 @@
 
 #include "util.hpp"
 
-__host__ __device
+__host__ __device__
 double f(double x) {
     return exp(cos(x))-2;
 };
 
-__host__ __device
+__host__ __device__
 double fp(double x) {
     return -sin(x) * exp(cos(x));
 };
