@@ -18,6 +18,7 @@ template <int THREADS>
 __global__
 void dot_gpu_kernel(const double *x, const double* y, double *result, int n) {
     __shared__ double localDot[THREADS];
+    int i = threadIdx.x;
     if (i<n){
         localDot[i] = x[i] * y[i];
         __syncthreads();
