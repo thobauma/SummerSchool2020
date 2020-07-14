@@ -39,14 +39,14 @@ int main(int argc, char** argv) {
     // TODO calculate grid dimensions
     // IGNORE for the first kernel writing exercise
     auto block_size = 128;
-    auto num_blocks = (n + block_size - 1) / block_size;
+    auto grid_dim = (n + block_size - 1) / block_size;
 
     // synchronize the host and device so that the timings are accurate
     cudaDeviceSynchronize();
 
     start = get_time();
     // TODO launch kernel (alpha=2.0)
-    axpy<double><<<num_blocks, block_size>>>(n, 2.0, x_device, y_device);
+    axpy<double><<<num_blocks, grid_dim>>>(n, 2.0, x_device, y_device);
 
     cudaDeviceSynchronize();
     auto time_axpy = get_time() - start;
