@@ -35,32 +35,32 @@ void dot_gpu_kernelSol(const double *x, const double* y, double *result, int n) 
 
 double dot_gpuSol(const double *x, const double* y, int n) {
     static double* result = malloc_managed<double>(1);
-    // TODO call dot product kernel
-    dot_gpu_kernelSol<1024><<<1,1024>>>(x, y, result, n);
+    dot_gpu_kernelSol<1024><<<1, 1024>>>(x, y, result, n);
+
     cudaDeviceSynchronize();
     return *result;
 }
 
-// TODO implement dot product kernel
-template <int THREADS>
-__global__
-void dot_gpu_kernel(const double *x, const double* y, double *result, int n) {
-    __shared__ double localDot[THREADS];
-    int i = threadIdx.x;
-    if (i<n){
-        localDot[i] = x[i] * y[i];
-        __syncthreads();
-        result += localDot[i];
-    }
-}
+// // TODO implement dot product kernel
+// template <int THREADS>
+// __global__
+// void dot_gpu_kernel(const double *x, const double* y, double *result, int n) {
+//     __shared__ double localDot[THREADS];
+//     int i = threadIdx.x;
+//     if (i<n){
+//         localDot[i] = x[i] * y[i];
+//         __syncthreads();
+//         result += localDot[i];
+//     }
+// }
 
-double dot_gpu(const double *x, const double* y, int n) {
-    static double* result = malloc_managed<double>(1);
-    // TODO call dot product kernel
-    dot_gpu_kernel<1024><<<1,1024>>>(x, y, &result, n);
-    cudaDeviceSynchronize();
-    return *result;
-}
+// double dot_gpu(const double *x, const double* y, int n) {
+//     static double* result = malloc_managed<double>(1);
+//     // TODO call dot product kernel
+//     dot_gpu_kernel<1024><<<1,1024>>>(x, y, &result, n);
+//     cudaDeviceSynchronize();
+//     return *result;
+// }
 
 int main(int argc, char** argv) {
     size_t pow = read_arg(argc, argv, 1, 4);
