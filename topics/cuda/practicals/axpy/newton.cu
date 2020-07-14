@@ -31,15 +31,15 @@ void newton_host(int n, double *x) {
 // TODO : implement newton_device() kernel that performs the work in newton_host
 //        in parallel on the GPU
 
-__global__
-double f(double x) {
-    return exp(cos(x))-2;
-};
+// __global__
+// double f(double x) {
+//     return exp(cos(x))-2;
+// };
 
-__global__
-double fp(double x) {
-    return -sin(x) * exp(cos(x));
-};
+// __global__
+// double fp(double x) {
+//     return -sin(x) * exp(cos(x));
+// };
 
 template <typename T>
 __global__
