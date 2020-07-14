@@ -17,7 +17,7 @@ void reverse_stringNaiveSol(char* str, int n){
 // reverse_stringNaiveSol<<<1,1024>>>(string,n);
 
 
-// shared version
+// shared version:
 __global__
 void reverse_stringSharedSol(char* str, int n){
     __shared__ char tmp[1024];
@@ -28,6 +28,18 @@ void reverse_stringSharedSol(char* str, int n){
         str[i] = tmp[n-i-1];
     }
 }
+
+// optimal solution
+__global__
+void reverse_stringOptimalSol(char* str, int n){
+    int i = threadIdx.x;
+    if ((i/2)<n){
+        char tmp = str[i];
+        str[i] = str[n-i-1];
+        str[n-i-1] = tmp;
+    }
+}
+
 
 // TODO : implement a kernel that reverses a string of length n in place
 // MY VERSION
@@ -61,7 +73,8 @@ int main(int argc, char** argv) {
     // TODO : call the string reverse function
     auto block_dim = n;
     auto grid_dim = (n + block_dim - 1) / block_dim;
-    reverse_string<<<1, block_dim, (n + 1) * sizeof(char)>>>(string, n);
+    reverse_stringOptimalSol<<<1,1024>>>(string,n);
+    // reverse_string<<<1, block_dim, (n + 1) * sizeof(char)>>>(string, n);
     // reverse_string<<<grid_dim, block_dim, (n + 1) * sizeof(char)>>>(string, n);
     // print reversed string
     cudaDeviceSynchronize();
