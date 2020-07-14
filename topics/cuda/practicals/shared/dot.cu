@@ -17,7 +17,7 @@ double dot_host(const double *x, const double* y, int n) {
 template <int THREADS>
 __global__
 void dot_gpu_kernel(const double *x, const double* y, double *result, int n) {
-    __shared__ buf[THREADS];
+    __shared__ double buf[THREADS];
     int i = threadIdx.x;
     buf[i] = i<n ? x[i]*y[i]: 0.;
 
