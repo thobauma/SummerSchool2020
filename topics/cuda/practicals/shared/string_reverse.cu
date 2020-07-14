@@ -23,7 +23,7 @@ void reverse_stringSharedSol(char* str, int n){
     __shared__ char tmp[1024];
     int i = threadIdx.x;
     if (i<n){
-        char tmp[i] = str[i];
+        tmp[i] = str[i];
         __syncthreads();
         str[i] = tmp[n-i-1];
     }
