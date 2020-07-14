@@ -33,10 +33,35 @@ void dot_gpu_kernel(const double *x, const double* y, double *result, int n) {
         *result=buf[i];
 }
 
+template <int THREADS>
+__global__
+void dot_gpu_kernel_full(const double *x, const double* y, double *result, int n) {
+    __shared__ double buf[THREADS];
+    int i = threadIdx.x;
+    int gid = threadIdx.x + blockDim.x * blockIdx.x;
+    
+    buf[i] = gid<n ? x[gid]*y[gid]: 0.;
+
+    int width = THREADS/2;
+
+    while(width){
+        __syncthreads();
+        if(i < width)
+            buf[i]+=buf[i+width];
+        width /= 2;
+    }
+    if(i==0)
+        atomicAdd(result,buf[0]);
+}
+
 double dot_gpu(const double *x, const double* y, int n) {
     static double* result = malloc_managed<double>(1);
+    *result = 0;
     // TODO call dot product kernel
-    dot_gpu_kernel<1024><<<1,1024>>>(x,y,result, n);
+    // dot_gpu_kernel<1024><<<1,1024>>>(x,y,result, n);
+
+    int nblock = (n - 1 )/ 64 + 1;
+    dot_gpu_kernel_full<64><<<1,64>>>(x, y, result, n);
     cudaDeviceSynchronize();
     return *result;
 }
