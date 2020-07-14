@@ -71,8 +71,7 @@ int main(int argc, char** argv) {
     std::cout << "string to reverse:\n" << string << "\n";
 
     // TODO : call the string reverse function
-    auto block_dim = n;
-    auto grid_dim = (n + block_dim - 1) / block_dim;
+
     reverse_stringOptimalSol<<<1,1024>>>(string,n);
     // reverse_string<<<1, block_dim, (n + 1) * sizeof(char)>>>(string, n);
     // reverse_string<<<grid_dim, block_dim, (n + 1) * sizeof(char)>>>(string, n);
