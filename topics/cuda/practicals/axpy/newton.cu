@@ -4,13 +4,12 @@
 
 #include "util.hpp"
 
-__host__ __device__
+__host__ __device
 double f(double x) {
     return exp(cos(x))-2;
 };
 
-
-__host__ __device__
+__host__ __device
 double fp(double x) {
     return -sin(x) * exp(cos(x));
 };
@@ -31,30 +30,18 @@ void newton_host(int n, double *x) {
 
 // TODO : implement newton_device() kernel that performs the work in newton_host
 //        in parallel on the GPU
-
-// __global__
-// double f(double x) {
-//     return exp(cos(x))-2;
-// };
-
-// __global__
-// double fp(double x) {
-//     return -sin(x) * exp(cos(x));
-// };
-
-
 __global__
-void newton_gpu(int n, double* x){
+void newton_gpu(int n, double *x) {
     auto i = threadIdx.x + blockIdx.x * blockDim.x;
-    if (i < n)
-    {
+    if (i<n){
         auto x0 = x[i];
-        for(int iter = 0; i < 5; ++iter){
+        for(int iter=0; iter<5; ++iter) {
             x0 -= f(x0)/fp(x0);
         }
-        x[i]=x0;
+        x[i] = x0;
     }
 }
+
 
 int main(int argc, char** argv) {
     size_t pow        = read_arg(argc, argv, 1, 20);
@@ -83,8 +70,7 @@ int main(int argc, char** argv) {
     auto time_kernel = -get_time();
 
     // TODO: launch kernel (use block_dim and grid_dim calculated above)
-    newton_gpu<<<grid_dim, block_dim>>>(n, xd);
-
+    newton_gpu<<<grid_dim, block_dim>>> (n,xd);
     cudaDeviceSynchronize();
     time_kernel += get_time();
 
