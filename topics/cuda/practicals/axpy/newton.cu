@@ -3,15 +3,15 @@
 #include <cuda.h>
 
 #include "util.hpp"
-template <typename T>
+
 __host__ __device__
-T f(T x) {
+double f(double x) {
     return exp(cos(x))-2;
 };
 
-template <typename T>
+
 __host__ __device__
-T fp(T x) {
+double fp(double x) {
     return -sin(x) * exp(cos(x));
 };
 
@@ -19,8 +19,7 @@ T fp(T x) {
 //      f(x) = 0
 // where
 //      f(x) = exp(cos(x)) - 2
-template <typename T>
-void newton_host(int n, T *x) {
+void newton_host(int n, double *x) {
     for(int i=0; i<n; ++i) {
         auto x0 = x[i];
         for(int iter=0; iter<5; ++iter) {
@@ -43,9 +42,9 @@ void newton_host(int n, T *x) {
 //     return -sin(x) * exp(cos(x));
 // };
 
-template <typename T>
+
 __global__
-void newton_device(int n, T* x){
+void newton_device(int n, double* x){
     auto i = threadIdx.x + blockIdx.x * blockDim.x;
     if (i < n)
     {
@@ -83,7 +82,7 @@ int main(int argc, char** argv) {
     auto time_kernel = -get_time();
 
     // TODO: launch kernel (use block_dim and grid_dim calculated above)
-    newton_device<double><<<grid_dim, block_dim>>>(n, xd);
+    newton_device<<<grid_dim, block_dim>>>(n, xd);
 
     cudaDeviceSynchronize();
     time_kernel += get_time();
