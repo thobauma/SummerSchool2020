@@ -44,13 +44,14 @@ void newton_host(int n, double *x) {
 
 
 __global__
-void newton_device(int n, double* x){
+void newton_gpu(int n, double* x){
     auto i = threadIdx.x + blockIdx.x * blockDim.x;
     if (i < n)
     {
         auto x0 = x[i];
-        for(int iter = 0; i < 5; ++iter)
+        for(int iter = 0; i < 5; ++iter){
             x0 -= f(x0)/fp(x0);
+        }
         x[i]=x0;
     }
 }
@@ -82,7 +83,7 @@ int main(int argc, char** argv) {
     auto time_kernel = -get_time();
 
     // TODO: launch kernel (use block_dim and grid_dim calculated above)
-    newton_device<<<grid_dim, block_dim>>>(n, xd);
+    newton_gpu<<<grid_dim, block_dim>>>(n, xd);
 
     cudaDeviceSynchronize();
     time_kernel += get_time();
