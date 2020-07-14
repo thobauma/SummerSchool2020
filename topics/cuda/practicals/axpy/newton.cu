@@ -46,10 +46,12 @@ __global__
 void newton_device(int n, T* x){
     auto i = threadIdx.x + blockIdx.x * blockDim.x;
     if (i < n)
+    {
         auto x0 = x[i];
         for(int iter = 0; i < 5; ++iter)
             x0 -= f(x0)/fp(x0);
         x[i]=x0;
+    }
 }
 
 int main(int argc, char** argv) {
