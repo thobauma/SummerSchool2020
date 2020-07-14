@@ -13,6 +13,34 @@ double dot_host(const double *x, const double* y, int n) {
     return sum;
 }
 
+// SOLUTION:
+template <int THREADS>
+__global__
+void dot_gpu_kernelSol(const double *x, const double* y, double *result, int n) {
+    __shared__ double buf[THREADS];
+    int i = threadIdx.x;
+    buf[i] = i<n ? x[i]*y[i]: 0.;
+
+    int width = THREADS/2;
+    while(width){
+        __syncthreads();
+        if(i<width){
+            buf[i] += buf[i+width];
+        width = width/2;
+    }
+    if(i==0){
+        *result = buf[i];
+    }
+}
+
+double dot_gpuSol(const double *x, const double* y, int n) {
+    static double* result = malloc_managed<double>(1);
+    // TODO call dot product kernel
+    dot_gpu_kernelSol<1024><<<1,1024>>>(x, y, result, n);
+    cudaDeviceSynchronize();
+    return *result;
+}
+
 // TODO implement dot product kernel
 template <int THREADS>
 __global__
@@ -55,8 +83,9 @@ int main(int argc, char** argv) {
     // copy initial conditions to device
     copy_to_device<double>(x_h, x_d, n);
     copy_to_device<double>(y_h, y_d, n);
-
-    auto result   = dot_gpu(x_d, y_d, n);
+    
+    auto result   = dot_gpuSol(x_d, y_d, n);
+    // auto result   = dot_gpu(x_d, y_d, n);
     auto expected = dot_host(x_h, y_h, n);
     printf("expected %f got %f\n", (float)expected, (float)result);
 
