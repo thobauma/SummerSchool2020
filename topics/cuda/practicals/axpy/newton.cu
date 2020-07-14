@@ -81,9 +81,6 @@ int main(int argc, char** argv) {
     auto time_kernel = -get_time();
 
     // TODO: launch kernel (use block_dim and grid_dim calculated above)
-    auto block_size = 128;
-    auto grid_dim = (n + block_size - 1) / block_size;
-
     newton_device<double><<<grid_dim, block_size>>>(n, xd);
 
     cudaDeviceSynchronize();
