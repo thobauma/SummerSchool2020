@@ -6,7 +6,7 @@
 
 // TODO CUDA kernel implementing axpy
 //      y = y + alpha*x
-template <T>
+template <typename T>
 __global__
 void axpy(int n, T alpha, const T* x, T* y){
     auto i = threadIdx.x + blockIdx.x * blockDim.x;
