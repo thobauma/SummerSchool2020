@@ -4,16 +4,29 @@
 
 #include "util.hpp"
 
+// naive solution:
+__global__
+void reverse_stringSol(char* str, int n){
+    int i = threadIdx.x;
+    if (i<n){
+        char tmp = str[i];
+        str[i] = str[n-i-1];
+        str[n-i-1] = tmp;
+    }
+}
+
+
 // TODO : implement a kernel that reverses a string of length n in place
 __global__
 void reverse_string(char* str, int n){
     extern __shared__ char stringBuffer[];
-    auto i = threadIdx.x + blockIdx.x * blockDim.x;
+    auto i = threadIdx.x;
+    // auto i = threadIdx.x + blockIdx.x * blockDim.x;
     if(i<n){
         stringBuffer[i]=str[i];
     }
     __syncthreads();
-    str[n-i] = stringBuffer[i];
+    str[n-i-1] = stringBuffer[i];
 }
 
 int main(int argc, char** argv) {
@@ -32,9 +45,10 @@ int main(int argc, char** argv) {
     std::cout << "string to reverse:\n" << string << "\n";
 
     // TODO : call the string reverse function
-    auto block_dim = 64;
+    auto block_dim = n;
     auto grid_dim = (n + block_dim - 1) / block_dim;
-    reverse_string<<<grid_dim, block_dim, (n + 1) * sizeof(char)>>>(string, n);
+    reverse_string<<<1, block_dim, (n + 1) * sizeof(char)>>>(string, n);
+    // reverse_string<<<grid_dim, block_dim, (n + 1) * sizeof(char)>>>(string, n);
     // print reversed string
     cudaDeviceSynchronize();
     std::cout << "reversed string:\n" << string << "\n";
