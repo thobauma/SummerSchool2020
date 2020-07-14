@@ -6,7 +6,7 @@
 
 // naive solution:
 __global__
-void reverse_stringSol(char* str, int n){
+void reverse_stringNaiveSol(char* str, int n){
     int i = threadIdx.x;
     if (i<n){
         char tmp = str[i];
@@ -14,9 +14,23 @@ void reverse_stringSol(char* str, int n){
         str[n-i-1] = tmp;
     }
 }
+// reverse_stringNaiveSol<<<1,1024>>>(string,n);
 
+
+// shared version
+__global__
+void reverse_stringSharedSol(char* str, int n){
+    __shared__ char tmp[1024];
+    int i = threadIdx.x;
+    if (i<n){
+        char tmp[i] = str[i];
+        __syncthreads();
+        str[i] = tmp[n-i-1];
+    }
+}
 
 // TODO : implement a kernel that reverses a string of length n in place
+// MY VERSION
 __global__
 void reverse_string(char* str, int n){
     extern __shared__ char stringBuffer[];
