@@ -124,7 +124,10 @@ double ss_dot(Field const& x, Field const& y)
 {
     double result = 0.;
     const int n = x.length();
-
+    auto status = cublasDdot (cublas_handle(), n,
+        x.device_data(), 1,
+        y.device_data(), 1,
+        &result);
     return result;
 }
 
