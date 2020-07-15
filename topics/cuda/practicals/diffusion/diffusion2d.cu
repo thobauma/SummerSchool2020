@@ -31,9 +31,7 @@ void diffusion(double *x0, double *x1, int nx, int ny, double dt) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = blockIdx.y * blockDim.y + threadIdx.y;
     if (i < nx-1 && i > 0 && j < ny-1 && j > 0){
-        x1[i,j] = x0[i,j] + dt * (-4.*x0[i,j]
-                        + x0[i,j-1] + x0[i,j+1]
-                        + x0[i-1,j] + x0[i+1,j]);
+        x1[i+j*nx] = x0[i+j*nx] + dt * (-4.*x0[i+j*nx]+ x0[i+nx*(j-1)] + x0[i+nx*(j+1)]+ x0[i-1+nx*j] + x0[i+1+nx*j]);
     }
                 
 }
@@ -79,7 +77,7 @@ int main(int argc, char** argv) {
     // time stepping loop
     for(auto step=0; step<nsteps; ++step) {
         // TODO: launch the diffusion kernel in 2D
-        diffusion<<<1,(nx,ny)>>>(x0, x1, nx, ny, dt)
+        diffusion<<<1,(nx,ny)>>>(x0, x1, nx, ny, dt);
         std::swap(x0, x1);
     }
     auto stop_event = stream.enqueue_event();
