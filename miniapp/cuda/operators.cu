@@ -229,8 +229,8 @@ void diffusion(data::Field const& U, data::Field &S)
     };
 
     // TODO: apply stencil to the interior grid points
-    auto bnd_grid_dim_xx = calculate_grid_dim(nx-1 ,64);
-    auto bnd_grid_dim_yy = calculate_grid_dim(ny-1 ,64);
+    auto bnd_grid_dim_xx = calculate_grid_dim(nx-2 ,64);
+    auto bnd_grid_dim_yy = calculate_grid_dim(ny-2 ,64);
     dim3 bnd(bnd_grid_dim_xx,bnd_grid_dim_yy);
     dim3 blocks(64,64);
     kernels::stencil_interior<<<bnd,blocks>>>(S.device_data(),U.device_data());
