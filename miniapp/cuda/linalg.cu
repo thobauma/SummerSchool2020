@@ -57,6 +57,21 @@ void axpy(
         y[i] = alpha * x[i] + y[i];
     }
 }
+
+__global__
+void add_scaled_diff(
+        double *y,
+        const double alpha,
+        const double *l,
+        const double *r,
+        const int n)
+{
+    auto i = threadIdx.x + blockDim.x*blockIdx.x;
+    if(i < n) {
+        y[i] = alpha * (l[i] - r[i]);
+    }
+}
+
 } // namespace kernels
 
 bool cg_initialized = false;
@@ -188,6 +203,11 @@ void ss_axpy(Field& y, const double alpha, Field const& x)
 // alpha is a scalar
 void ss_scaled_diff(Field& y, const double alpha, Field const& l, Field const& r)
 {
+    const int n = y.length();
+    auto grid_dim = calculate_grid_dim(block_dim, n);
+
+    kernels::axpy<<<grid_dim,block_dim>>>
+        (y.device_data(), alpha, l.device_data(),r.device_data(), n);
 }
 
 // computes y := alpha*x
