@@ -85,6 +85,21 @@ void scale(
     }
 }
 
+__global__
+void lcomb(
+        double *y,
+        const double alpha,
+        const double* x,
+        const double beta,
+        const double* z,
+        const int n)
+{
+    auto i = threadIdx.x + blockDim.x*blockIdx.x;
+    if(i < n) {
+        y[i] = alpha * x[i] + beta* z[i];
+    }
+}
+
 } // namespace kernels
 
 bool cg_initialized = false;
@@ -244,6 +259,11 @@ void ss_scale(Field& y, const double alpha, Field& x)
 // y, x and z are vectors
 void ss_lcomb(Field& y, const double alpha, Field& x, const double beta, Field const& z)
 {
+    const int n = y.length();
+    auto grid_dim = calculate_grid_dim(block_dim, n);
+
+    kernels::lcomb<<<grid_dim,block_dim>>>
+        (y.device_data(), alpha, x.device_data(), beta, z.device_data(), n);
 }
 
 // conjugate gradient solver
