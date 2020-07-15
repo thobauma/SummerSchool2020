@@ -61,25 +61,25 @@ namespace kernels {
         //                          + U(i,j-1) + U(i,j+1) // north and south
         //                          + alpha * x_old(i,j)
         //                          + dxs * U(i,j) * (1.0 - U(i,j));
-        auto j = threadIdx.x + blockDim.x*blockIdx.x+1;
-        auto i = threadIdx.x + blockDim.x*blockIdx.x+1;
+        // auto j = threadIdx.x + blockDim.x*blockIdx.x+1;
+        // auto i = threadIdx.x + blockDim.x*blockIdx.x+1;
 
-        auto nx = params.nx;
-        auto ny = params.ny;
-        auto alpha = params.alpha;
-        auto dxs = params.dxs;
+        // auto nx = params.nx;
+        // auto ny = params.ny;
+        // auto alpha = params.alpha;
+        // auto dxs = params.dxs;
 
-        auto find_pos = [&nx] (size_t i, size_t j) {
-            return i + j * nx;
-        };
-        if(i < nx-1 && j < ny-1){
-            auto pos = find_pos(i,j);
-            S[pos] = -(4. + alpha) * U[pos]             // central point
-                                + U[pos-1] + U[pos+1]   // east and west
-                                + U[pos-nx] + U[pos+nx] // north and south
-                                + alpha * params.x_old[pos]
-                                + dxs * U[pos] * (1.0 - U[pos]);
-        }
+        // auto find_pos = [&nx] (size_t i, size_t j) {
+        //     return i + j * nx;
+        // };
+        // if(i < nx-1 && j < ny-1){
+        //     auto pos = find_pos(i,j);
+        //     S[pos] = -(4. + alpha) * U[pos]             // central point
+        //                         + U[pos-1] + U[pos+1]   // east and west
+        //                         + U[pos-nx] + U[pos+nx] // north and south
+        //                         + alpha * params.x_old[pos]
+        //                         + dxs * U[pos] * (1.0 - U[pos]);
+        // }
 
 
     }
@@ -134,11 +134,11 @@ namespace kernels {
 
             // TODO : do the stencil on the SOUTH side
             // SOUTH : j = 0
-            auto pos2 = i;
-            S[pos2] = -(4. + alpha) * U[pos2]
-                        + U[pos2-1] + U[pos2+1] + U[pos2+nx]
-                        + alpha*params.x_old[pos2] + params.bndS[i]
-                        + dxs * U[pos2] * (1.0 - U[pos2]);
+            // auto pos2 = i;
+            // S[pos2] = -(4. + alpha) * U[pos2]
+            //             + U[pos2-1] + U[pos2+1] + U[pos2+nx]
+            //             + alpha*params.x_old[pos2] + params.bndS[i]
+            //             + dxs * U[pos2] * (1.0 - U[pos2]);
         }
     }
 
