@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
         auto bx = 8;
         auto by = 8;
         dim3 block_dim(bx, by);
-        dim3 grid_dim((bx-1)/bx+1,(by-1)/by+1)
+        dim3 grid_dim((bx-1)/bx+1,(by-1)/by+1);
         diffusion<<<grid_dim, block_dim>>>(x0, x1, nx, ny, dt);
         // diffusion<<<1,(nx,ny)>>>(x0, x1, nx, ny, dt);
         std::swap(x0, x1);
