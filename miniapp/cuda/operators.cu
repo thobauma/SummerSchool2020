@@ -107,11 +107,11 @@ namespace kernels {
 
             // TODO : do the stencil on the WEST side
             // WEST : i = 0
-            auto pos = find_pos(0, j);
-            S[pos] = -(4. + alpha) * U[pos]
-                        + U[pos+1] + U[pos-nx] + U[pos+nx]
-                        + alpha*params.x_old[pos] + params.bndW[j]
-                        + dxs * U[pos] * (1.0 - U[pos]);
+            auto pos2 = find_pos(0, j);
+            S[pos2] = -(4. + alpha) * U[pos2]
+                        + U[pos2+1] + U[pos-nx] + U[pos2+nx]
+                        + alpha*params.x_old[pos2] + params.bndW[j]
+                        + dxs * U[pos2] * (1.0 - U[pos2]);
         }
     }
 
@@ -134,11 +134,11 @@ namespace kernels {
 
             // TODO : do the stencil on the SOUTH side
             // SOUTH : j = 0
-            auto pos = i;
-            S[pos] = -(4. + alpha) * U[pos]
-                        + U[pos-1] + U[pos+1] + U[pos+nx]
-                        + alpha*params.x_old[pos] + params.bndS[i]
-                        + dxs * U[pos] * (1.0 - U[pos]);
+            auto pos2 = i;
+            S[pos2] = -(4. + alpha) * U[pos2]
+                        + U[pos2-1] + U[pos2+1] + U[pos2+nx]
+                        + alpha*params.x_old[pos2] + params.bndS[i]
+                        + dxs * U[pos2] * (1.0 - U[pos2]);
         }
     }
 
