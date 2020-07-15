@@ -156,6 +156,10 @@ double ss_dot(Field const& x, Field const& y)
         x.device_data(), 1,
         y.device_data(), 1,
         &result);
+    if (status != CUBLAS_STATUS_SUCCESS){
+        std::cerr << "CUBLAS error in dot call" << std::endl;
+        exit(1);
+    }
     return result;
 }
 
@@ -170,6 +174,10 @@ double ss_norm2(Field const& x)
     const int n = x.length();
     auto status = cublasDnrm2(cublas_handle(), n,
         x.device_data(), 1, &result);
+    if (status != CUBLAS_STATUS_SUCCESS){
+        std::cerr << "CUBLAS error in norm2 call" << std::endl;
+        exit(1);
+    }
     return result;
 }
 
