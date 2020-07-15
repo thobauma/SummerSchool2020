@@ -77,7 +77,7 @@ namespace kernels {
             S[pos] = -(4. + alpha) * U[pos]             // central point
                                 + U[pos-1] + U[pos+1]   // east and west
                                 + U[pos-nx] + U[pos+nx] // north and south
-                                + alpha * x_old[pos]
+                                + alpha * params.x_old[pos]
                                 + dxs * U[pos] * (1.0 - U[pos]);
         }
 
