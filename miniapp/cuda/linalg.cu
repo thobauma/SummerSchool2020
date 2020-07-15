@@ -163,7 +163,7 @@ double ss_dot(Field const& x, Field const& y)
     return result;
 }
 
-// TODO : implement the dot product with cublas
+// TODO : implement the 2-norm with cublas
 // HINT : use cublas_handle() to get the cublas handle
 
 // computes the 2-norm of x
