@@ -72,6 +72,19 @@ void scaled_diff(
     }
 }
 
+__global__
+void scale(
+        double *y,
+        const double alpha,
+        const double* x,
+        const int n)
+{
+    auto i = threadIdx.x + blockDim.x*blockIdx.x;
+    if(i < n) {
+        y[i] = alpha * x[i];
+    }
+}
+
 } // namespace kernels
 
 bool cg_initialized = false;
@@ -219,6 +232,11 @@ void ss_scaled_diff(Field& y, const double alpha, Field const& l, Field const& r
 // y and x are vectors
 void ss_scale(Field& y, const double alpha, Field& x)
 {
+    const int n = y.length();
+    auto grid_dim = calculate_grid_dim(block_dim, n);
+
+    kernels::scale<<<grid_dim,block_dim>>>
+        (y.device_data(), alpha, x.device_data(), n);
 }
 
 // computes linear combination of two vectors y := alpha*x + beta*z
