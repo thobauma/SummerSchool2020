@@ -45,6 +45,18 @@ void fill(double* x, const double value, int n)
     if(i<n)
         x[i] = value;
 }
+__global__
+void axpy(
+        double *y,
+        const double alpha,
+        const double* x,
+        const int n)
+{
+    auto i = threadIdx.x + blockDim.x*blockIdx.x;
+    if(i < n) {
+        y[i] = alpha * x[i] + y[i];
+    }
+}
 } // namespace kernels
 
 bool cg_initialized = false;
@@ -164,6 +176,11 @@ void ss_fill(Field& x, const double value)
 // alpha is a scalar
 void ss_axpy(Field& y, const double alpha, Field const& x)
 {
+    const int n = y.length();
+    auto grid_dim = calculate_grid_dim(block_dim, n);
+
+    kernels::axpy<<<grid_dim,block_dim>>>
+        (y.device_data(), alpha, x.device_data(), n);
 }
 
 // computes y = alpha*(l-r)
