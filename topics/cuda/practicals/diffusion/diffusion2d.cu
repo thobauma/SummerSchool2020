@@ -29,21 +29,21 @@ void diffusion(double *x0, double *x1, int nx, int ny, double dt) {
                 //    }
                 //  }
 
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    int j = blockIdx.y * blockDim.y + threadIdx.y;
-    if (i < nx-1 && i > 0 && j < ny-1 && j > 0){
-        x1[i+j*nx] = x0[i+j*nx] + dt * (-4.*x0[i+j*nx]
-                            + x0[i+nx*(j-1)] + x0[i+nx*(j+1)]
-                            + x0[i-1+nx*j] + x0[i+1+nx*j]);
-    }
-    // int i = blockIdx.x * blockDim.x + threadIdx.x+1;
-    // int j = blockIdx.y * blockDim.y + threadIdx.y+1;
-    // if (i < nx-1 && j < ny-1){
-    //     auto pos = i+j*nx;
-    //         x1[pos] = x0[pos] + dt * (-4.*x0[pos]
-    //                             + x0[pos-nx] + x0[pos+nx]
-    //                             + x0[pos-1] + x0[pos+1]);
+    // int i = blockIdx.x * blockDim.x + threadIdx.x;
+    // int j = blockIdx.y * blockDim.y + threadIdx.y;
+    // if (i < nx-1 && i > 0 && j < ny-1 && j > 0){
+    //     x1[i+j*nx] = x0[i+j*nx] + dt * (-4.*x0[i+j*nx]
+    //                         + x0[i+nx*(j-1)] + x0[i+nx*(j+1)]
+    //                         + x0[i-1+nx*j] + x0[i+1+nx*j]);
     // }
+    int i = blockIdx.x * blockDim.x + threadIdx.x+1;
+    int j = blockIdx.y * blockDim.y + threadIdx.y+1;
+    if (i < nx-1 && j < ny-1){
+        auto pos = i+j*nx;
+            x1[pos] = x0[pos] + dt * (-4.*x0[pos]
+                                + x0[pos-nx] + x0[pos+nx]
+                                + x0[pos-1] + x0[pos+1]);
+    }
                 
 }
 
