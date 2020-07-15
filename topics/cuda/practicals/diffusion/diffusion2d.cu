@@ -19,15 +19,23 @@ void write_to_file(int nx, int ny, double* data);
 
 __global__
 void diffusion(double *x0, double *x1, int nx, int ny, double dt) {
-// TODO : implement stencil using 2d launch configuration
-// NOTE : i-major ordering, i.e. x[i,j] is indexed at location [i+j*nx]
-//  for(i=1; i<nx-1; ++i) {
-//    for(j=1; j<ny-1; ++j) {
-//        x1[i,j] = x0[i,j] + dt * (-4.*x0[i,j]
-//                   + x0[i,j-1] + x0[i,j+1]
-//                   + x0[i-1,j] + x0[i+1,j]);
-//    }
-//  }
+    // TODO : implement stencil using 2d launch configuration
+    // NOTE : i-major ordering, i.e. x[i,j] is indexed at location [i+j*nx]
+    //  for(i=1; i<nx-1; ++i) {
+        //    for(j=1; j<ny-1; ++j) {
+            //        x1[i,j] = x0[i,j] + dt * (-4.*x0[i,j]
+                //                   + x0[i,j-1] + x0[i,j+1]
+                //                   + x0[i-1,j] + x0[i+1,j]);
+                //    }
+                //  }
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+    if (i < nx-1 && i > 0 && j < ny-1 && j > 0){
+        x1[i,j] = x0[i,j] + dt * (-4.*x0[i,j]
+                        + x0[i,j-1] + x0[i,j+1]
+                        + x0[i-1,j] + x0[i+1,j]);
+    }
+                
 }
 
 int main(int argc, char** argv) {
@@ -71,7 +79,7 @@ int main(int argc, char** argv) {
     // time stepping loop
     for(auto step=0; step<nsteps; ++step) {
         // TODO: launch the diffusion kernel in 2D
-
+        diffusion<<<1,(nx,ny)>>>(x0, x1, nx, ny, dt)
         std::swap(x0, x1);
     }
     auto stop_event = stream.enqueue_event();
