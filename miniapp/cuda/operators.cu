@@ -61,6 +61,27 @@ namespace kernels {
         //                          + U(i,j-1) + U(i,j+1) // north and south
         //                          + alpha * x_old(i,j)
         //                          + dxs * U(i,j) * (1.0 - U(i,j));
+        auto j = threadIdx.x + blockDim.x*blockIdx.x+1;
+        auto i = threadIdx.x + blockDim.x*blockIdx.x+1;
+
+        auto nx = params.nx;
+        auto ny = params.ny;
+        auto alpha = params.alpha;
+        auto dxs = params.dxs;
+
+        auto find_pos = [&nx] (size_t i, size_t j) {
+            return i + j * nx;
+        };
+        if(i < nx-1 && j < ny-1){
+            auto pos = find_pos(i,j);
+            S[pos] = -(4. + alpha) * U[pos]             // central point
+                                + U[pos-1] + U[pos+1]   // east and west
+                                + U[pos-nx] + U[pos+nx] // north and south
+                                + alpha * x_old[pos]
+                                + dxs * U[pos] * (1.0 - U[pos]);
+        }
+
+
     }
 
     __global__
@@ -86,6 +107,11 @@ namespace kernels {
 
             // TODO : do the stencil on the WEST side
             // WEST : i = 0
+            auto pos = find_pos(0, j);
+            S[pos] = -(4. + alpha) * U[pos]
+                        + U[pos+1] + U[pos-nx] + U[pos+nx]
+                        + alpha*params.x_old[pos] + params.bndW[j]
+                        + dxs * U[pos] * (1.0 - U[pos]);
         }
     }
 
@@ -108,6 +134,11 @@ namespace kernels {
 
             // TODO : do the stencil on the SOUTH side
             // SOUTH : j = 0
+            auto pos = i;
+            S[pos] = -(4. + alpha) * U[pos]
+                        + U[pos-1] + U[pos+1] + U[pos+nx]
+                        + alpha*params.x_old[pos] + params.bndS[i]
+                        + dxs * U[pos] * (1.0 - U[pos]);
         }
     }
 
@@ -198,6 +229,9 @@ void diffusion(data::Field const& U, data::Field &S)
     };
 
     // TODO: apply stencil to the interior grid points
+    auto bnd_grid_dim = calculate_grid_dim(64,64);
+    kernels::stencil_interior<<<bnd_grid_dim, 64>>>(S.device_data(),U.device_data());
+
 
     cudaDeviceSynchronize();    // TODO: remove after debugging
     cuda_check_last_kernel("internal kernel"); // TODO: remove after debugging
