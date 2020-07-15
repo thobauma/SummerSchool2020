@@ -140,7 +140,8 @@ double ss_norm2(Field const& x)
 {
     double result = 0;
     const int n = x.length();
-
+    auto status = cublasDnrm2(cublas_handle(), n,
+        x.device_data(), 1, &result)
     return result;
 }
 
