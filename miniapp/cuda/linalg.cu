@@ -59,7 +59,7 @@ void axpy(
 }
 
 __global__
-void add_scaled_diff(
+void scaled_diff(
         double *y,
         const double alpha,
         const double *l,
@@ -206,7 +206,7 @@ void ss_scaled_diff(Field& y, const double alpha, Field const& l, Field const& r
     const int n = y.length();
     auto grid_dim = calculate_grid_dim(block_dim, n);
 
-    kernels::axpy<<<grid_dim,block_dim>>>
+    kernels::scaled_diff<<<grid_dim,block_dim>>>
         (y.device_data(), alpha, l.device_data(),r.device_data(), n);
 }
 
