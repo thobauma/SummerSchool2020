@@ -96,6 +96,7 @@ void ss_add_scaled_diff(Field& y, Field const& x, const double alpha,
     const int n = y.length();
 
     // TODO: Offload this loop to the GPU
+    #pragma acc parallel loop present(y[0:n], x[0:n], l[0:n], r[0:n])
     for (int i = 0; i < n; i++)
         y[i] = x[i] + alpha * (l[i] - r[i]);
 }
