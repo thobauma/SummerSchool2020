@@ -52,7 +52,9 @@ void diffusion(data::Field &U, data::Field &S)
 
     // the interior grid points
     {
+    #pragma acc parallel loop
     for (int j=1; j < jend; j++) {
+        #pragma acc loop
         for (int i=1; i < iend; i++) {
             S(i,j) = -(4. + alpha) * U(i,j)               // central point
                                     + U(i-1,j) + U(i+1,j) // east and west
@@ -65,6 +67,7 @@ void diffusion(data::Field &U, data::Field &S)
     // the east boundary
     {
         int i = nx - 1;
+        #pragma acc parallel loop
         for (int j = 1; j < jend; j++)
         {
             S(i,j) = -(4. + alpha) * U(i,j)
@@ -77,6 +80,7 @@ void diffusion(data::Field &U, data::Field &S)
     // the west boundary
     {
         int i = 0;
+        #pragma acc parallel loop
         for (int j = 1; j < jend; j++)
         {
             S(i,j) = -(4. + alpha) * U(i,j)
@@ -99,6 +103,7 @@ void diffusion(data::Field &U, data::Field &S)
         }
 
         // north boundary
+        #pragma acc parallel loop
         for (int i = 1; i < iend; i++)
         {
             S(i,j) = -(4. + alpha) * U(i,j)
@@ -129,6 +134,7 @@ void diffusion(data::Field &U, data::Field &S)
         }
 
         // south boundary
+        #pragma acc parallel loop
         for (int i = 1; i < iend; i++)
         {
             S(i,j) = -(4. + alpha) * U(i,j)
