@@ -5,7 +5,7 @@
 
 #define NO_CUDA
 #include "util.h"
-#define _OPENACC
+
 #ifdef _OPENACC
 // TODO: Annotate the following function accordingly in order to be called from
 //       an OpenACC kernel context
