@@ -100,12 +100,12 @@ class Field {
     /////////////////////////////////////////////////
     void update_host() {
         // TODO: Update the host copy of the data
-        #pragma acc data copyin(ptr[0:xdim_*ydim_])
+        #pragma acc data copyin(ptr_[0:xdim_*ydim_])
     }
 
     void update_device() {
         // TODO: Update the device copy of the data
-        #pragma acc data copyout(ptr[0:xdim_*ydim_])
+        #pragma acc data copyout(ptr_[0:xdim_*ydim_])
     }
 
     private:
