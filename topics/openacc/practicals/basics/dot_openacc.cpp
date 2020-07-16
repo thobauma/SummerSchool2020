@@ -20,7 +20,8 @@ double dot_gpu(const double *x, const double *y, int n) {
     int i;
 
     // TODO: Offload this loop to the GPU
-    #pragma acc parallel copyin(x[0:n]) copyin(y[0:n]) reduction(+:sum)
+    // #pragma acc parallel copyin(x[0:n]) copyin(y[0:n]) reduction(+:sum)
+    #pragma acc kernels
     for (i = 0; i < n; ++i) {
         sum += x[i]*y[i];
     }
