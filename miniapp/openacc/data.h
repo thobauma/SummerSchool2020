@@ -100,10 +100,12 @@ class Field {
     /////////////////////////////////////////////////
     void update_host() {
         // TODO: Update the host copy of the data
+        #pragma acc copyin(ptr[0:xdim_*ydim_])
     }
 
     void update_device() {
         // TODO: Update the device copy of the data
+        #pragma acc copyout(ptr[0:xdim_*ydim_])
     }
 
     private:
@@ -116,12 +118,15 @@ class Field {
         //       Pay attention to the order of the copies so that the data
         //       pointed to by `ptr_` is properly attached to the GPU's copy of
         //       this object.
+        #pragma acc enter data copyin(this)
+        #pragma acc enter data create(ptr_[0:xdim_*ydim_])
     }
 
     // set to a constant value
     void fill(double val) {
         // initialize the host and device copy at the same time
         // TODO: Offload this loop to the GPU
+        #pragma acc parallel for present(ptr_[0:xdim_*ydim_])
         for(int i=0; i<xdim_*ydim_; ++i)
             ptr_[i] = val;
 
@@ -136,6 +141,8 @@ class Field {
 
             // NOTE: You will see some OpenACC runtime errors when your program exits
             //       This is a problem with the PGI runtime; you may ignore them.
+            #pragma acc exit data delete(ptr_)
+            #pragma acc exit data delete(this)
             delete[] ptr_;
         }
 
