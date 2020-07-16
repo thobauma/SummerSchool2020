@@ -141,7 +141,7 @@ class Field {
 
             // NOTE: You will see some OpenACC runtime errors when your program exits
             //       This is a problem with the PGI runtime; you may ignore them.
-            #pragma acc exit data delete(ptr_)
+            #pragma acc exit data delete(ptr_[0:xdim_*ydim_])
             #pragma acc exit data delete(this)
             delete[] ptr_;
         }
