@@ -100,12 +100,12 @@ class Field {
     /////////////////////////////////////////////////
     void update_host() {
         // TODO: Update the host copy of the data
-        #pragma acc copyin(ptr[0:xdim_*ydim_])
+        #pragma acc data copyin(ptr[0:xdim_*ydim_])
     }
 
     void update_device() {
         // TODO: Update the device copy of the data
-        #pragma acc copyout(ptr[0:xdim_*ydim_])
+        #pragma acc data copyout(ptr[0:xdim_*ydim_])
     }
 
     private:
@@ -126,7 +126,7 @@ class Field {
     void fill(double val) {
         // initialize the host and device copy at the same time
         // TODO: Offload this loop to the GPU
-        #pragma acc parallel for present(ptr_[0:xdim_*ydim_])
+        #pragma acc parallel loop present(ptr_[0:xdim_*ydim_])
         for(int i=0; i<xdim_*ydim_; ++i)
             ptr_[i] = val;
 
