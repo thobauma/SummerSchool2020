@@ -2,3 +2,5 @@ cscsSummerSchool/
 topics/ml_rapids/HIGGS.csv.gz
 topics/openacc/slides/openacc-slides.pdf
 .ipynb_checkpoints
+__pycache__
+logs
